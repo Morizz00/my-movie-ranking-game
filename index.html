@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 More or Less</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+    <div id="title-screen" class="text-center">
+        <h1 class="text-4xl font-bold mb-4">🎬 More or Less</h1>
+        <p class="text-xl mb-4">Movie Ranking Game</p>
+        <p class="text-lg mb-6">Guess which movie is ranked higher!</p>
+        <button onclick="startGame()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Start Game</button>
+    </div>
+
+    <div id="game-screen" class="hidden text-center w-full max-w-4xl">
+        <div class="flex justify-between mb-6">
+            <div><span id="round">1</span> Round</div>
+            <div><span id="score">0</span> Score</div>
+            <div><span id="total">10</span> Total</div>
+        </div>
+        <div id="question" class="mb-6">
+            <p class="text-xl font-semibold">Which movie is ranked higher?</p>
+            <p>Choose the movie you think has a higher ranking</p>
+        </div>
+        <div id="movies" class="flex justify-around items-center">
+            <!-- Movie cards will be inserted here -->
+        </div>
+        <div id="feedback" class="mt-4 text-lg"></div>
+        <button id="next-button" onclick="nextRound()" class="hidden mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Next Round →</button>
+    </div>
+
+    <div id="end-screen" class="hidden text-center">
+        <h2 class="text-3xl font-bold mb-4">🎉 Game Complete!</h2>
+        <p class="text-xl mb-4">Your final score: <span id="final-score"></span>/10</p>
+        <button onclick="startGame()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">🔄 Play Again</button>
+    </div>
+
+    <div id="error-screen" class="hidden text-center">
+        <h2 class="text-2xl font-bold mb-4">⚠️ Connection Error</h2>
+        <p class="mb-4">Unable to load game data. Please make sure the backend server is running.</p>
+        <button onclick="startGame()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">🔄 Try Again</button>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentRound = 0;
+        let score = 0;
+        const totalRounds = 10;
+
+        async function startGame() {
+            document.getElementById('title-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('error-screen').classList.add('hidden');
+            currentRound = 0;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            document.getElementById('round').textContent = currentRound + 1;
+
+            try {
+                const response = await fetch('http://localhost:8080/game');
+                if (!response.ok) throw new Error('Network response was not ok');
+                questions = await response.json();
+                displayRound();
+            } catch (error) {
+                showError();
+            }
+        }
+
+        function displayRound() {
+            if (currentRound >= totalRounds) {
+                showEndScreen();
+                return;
+            }
+            const { movieA, movieB, type } = questions[currentRound];
+            document.getElementById('question').innerHTML = `
+                <p class="text-xl font-semibold">Which movie is ranked ${type === 'more' ? 'higher' : 'lower'}?</p>
+                <p>Choose the movie you think has a ${type === 'more' ? 'higher' : 'lower'} ranking</p>
+            `;
+            document.getElementById('movies').innerHTML = `
+                <div class="movie-card">
+                    <img src="${movieA.poster_url}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'" alt="${movieA.title}" class="w-full h-64 object-cover rounded-lg mb-4">
+                    <p class="text-lg font-semibold">${movieA.title}</p>
+                    <button onclick="checkAnswer('A')" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Choose Movie A
+                    </button>
+                </div>
+                <div class="text-2xl font-bold my-4">VS</div>
+                <div class="movie-card">
+                    <img src="${movieB.poster_url}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'" alt="${movieB.title}" class="w-full h-64 object-cover rounded-lg mb-4">
+                    <p class="text-lg font-semibold">${movieB.title}</p>
+                    <button onclick="checkAnswer('B')" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Choose Movie B
+                    </button>
+                </div>
+            `;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('next-button').classList.add('hidden');
+        }
+
+        function checkAnswer(choice) {
+            const { movieA, movieB, type } = questions[currentRound];
+            const correct = (type === 'more' && choice === (movieA.rank < movieB.rank ? 'A' : 'B')) ||
+                           (type === 'less' && choice === (movieA.rank > movieB.rank ? 'A' : 'B'));
+            if (correct) {
+                score++;
+                document.getElementById('score').textContent = score;
+                document.getElementById('feedback').textContent = '✅ Correct!';
+            } else {
+                document.getElementById('feedback').textContent = '❌ Incorrect!';
+            }
+            document.getElementById('next-button').classList.remove('hidden');
+        }
+
+        function nextRound() {
+            currentRound++;
+            document.getElementById('round').textContent = currentRound + 1;
+            displayRound();
+        }
+
+        function showEndScreen() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('final-score').textContent = score;
+        }
+
+        function showError() {
+            document.getElementById('title-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('error-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
