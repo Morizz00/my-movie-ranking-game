@@ -1,0 +1,39 @@
+import csv
+import requests
+import urllib.parse
+
+OMDB_API_KEY = "<add your omdb api key here>"  
+FALLBACK_URL = "https://via.placeholder.com/300x450?text=No+Image"
+
+def get_poster_url(title):
+    try:
+        
+        encoded_title = urllib.parse.quote(title)
+        response = requests.get(
+            f"http://www.omdbapi.com/?t={encoded_title}&apikey={OMDB_API_KEY}"
+        )
+        data = response.json()
+        if data.get("Response") == "True" and data.get("Poster") and data["Poster"] != "N/A":
+            return data["Poster"]
+        return FALLBACK_URL
+    except Exception as e:
+        print(f"Error fetching poster for {title}: {e}")
+        return FALLBACK_URL
+
+
+with open("movies.csv", "r", encoding="utf-8") as f:
+    reader = csv.reader(f)
+    headers = next(reader) 
+    movies = list(reader)
+
+for movie in movies:
+    title = movie[1]
+    print(f"Fetching poster for {title}...")
+    movie[3] = get_poster_url(title)
+
+with open("movies_updated.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(headers)
+    writer.writerows(movies)
+
+print("Updated movies.csv saved as movies_updated.csv")
