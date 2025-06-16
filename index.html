@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 More or Less - Movie Ranking Game</title>
+    <title>🎬 More or Less - Movie & TV Ranking Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -35,6 +35,26 @@
         .movie-card:hover {
             transform: translateY(-10px) rotateY(5deg);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .mode-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .mode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .mode-card.selected {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
         }
         
         .countdown-circle {
@@ -197,6 +217,15 @@
                 opacity: 0;
             }
         }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffd93d, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
 </head>
 <body class="bg-animated min-h-screen flex flex-col items-center justify-center relative">
@@ -209,13 +238,42 @@
 
     <!-- Title Screen -->
     <div id="title-screen" class="text-center text-white floating">
-        <div class="neon-glow bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 max-w-2xl">
+        <div class="neon-glow bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 max-w-4xl">
             <h1 class="text-6xl font-bold mb-6 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
                 🎬 MORE OR LESS
             </h1>
-            <p class="text-2xl mb-4 text-gray-200">Movie Ranking Game</p>
-            <p class="text-lg mb-8 text-gray-300">Guess which movie is ranked higher on IMDB!</p>
-            <button onclick="startGame()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl transition-all duration-300">
+            <p class="text-2xl mb-4 text-gray-200">Movie & TV Show Ranking Game</p>
+            <p class="text-lg mb-8 text-gray-300">Guess which movie or TV show is ranked higher on IMDB!</p>
+            
+            <!-- Mode Selection -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-4 text-white">Choose Your Mode:</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="mode-card rounded-2xl p-6 text-center" data-mode="movies" onclick="selectMode('movies')">
+                        <div class="mode-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">Movies Only</h4>
+                        <p class="text-sm opacity-75">Classic cinema showdown</p>
+                    </div>
+                    <div class="mode-card rounded-2xl p-6 text-center" data-mode="tv" onclick="selectMode('tv')">
+                        <div class="mode-icon">
+                            <i class="fas fa-tv"></i>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">TV Shows Only</h4>
+                        <p class="text-sm opacity-75">Television series battle</p>
+                    </div>
+                    <div class="mode-card rounded-2xl p-6 text-center" data-mode="mixed" onclick="selectMode('mixed')">
+                        <div class="mode-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">Mixed Mode</h4>
+                        <p class="text-sm opacity-75">Movies vs TV shows</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="start-button" onclick="startGame()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 opacity-50 cursor-not-allowed" disabled>
                 <i class="fas fa-play mr-2"></i>START GAME
             </button>
         </div>
@@ -229,8 +287,9 @@
                 <div class="text-sm opacity-75">ROUND</div>
                 <div class="score-counter" id="round">1</div>
             </div>
-            <div class="countdown-circle" id="countdown">
-                300
+            <div class="text-center">
+                <div class="countdown-circle" id="countdown">30</div>
+                <div class="text-xs mt-2 opacity-75" id="mode-display">MOVIES</div>
             </div>
             <div class="text-white">
                 <div class="text-sm opacity-75">SCORE</div>
@@ -240,8 +299,8 @@
 
         <!-- Question -->
         <div id="question" class="mb-8 text-white">
-            <p class="text-3xl font-bold mb-2">Which movie is ranked higher?</p>
-            <p class="text-lg opacity-75">Choose the movie you think has a higher MoidDB ranking</p>
+            <p class="text-3xl font-bold mb-2">Which is ranked higher?</p>
+            <p class="text-lg opacity-75">Choose the option you think has a higher IMDB ranking</p>
         </div>
 
         <!-- Movies Container -->
@@ -265,7 +324,7 @@
             <p class="text-2xl mb-6">Your final score:</p>
             <div class="score-counter text-6xl mb-8" id="final-score">0/10</div>
             <div id="performance-message" class="text-lg mb-8 opacity-75"></div>
-            <button onclick="startGame()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl">
+            <button onclick="goToTitleScreen()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl">
                 <i class="fas fa-redo mr-2"></i>PLAY AGAIN
             </button>
         </div>
@@ -275,8 +334,8 @@
     <div id="error-screen" class="hidden text-center text-white">
         <div class="neon-glow bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 max-w-2xl">
             <h2 class="text-4xl font-bold mb-6">⚠️ CONNECTION ERROR</h2>
-            <p class="text-lg mb-8 opacity-75">Unable to load game data. Please make sure the backend server is running on port 8080.</p>
-            <button onclick="startGame()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl">
+            <p class="text-lg mb-8 opacity-75" id="error-message">Unable to load game data. Please make sure the backend server is running on port 8080.</p>
+            <button onclick="goToTitleScreen()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl">
                 <i class="fas fa-sync mr-2"></i>TRY AGAIN
             </button>
         </div>
@@ -287,7 +346,8 @@
         let currentRound = 0;
         let score = 0;
         let countdownInterval;
-        let timeLeft = 300;
+        let timeLeft = 30;
+        let selectedMode = '';
         const totalRounds = 10;
 
         // Initialize particles
@@ -323,9 +383,27 @@
             }, 4000);
         }
 
+        // Mode selection
+        function selectMode(mode) {
+            selectedMode = mode;
+            
+            // Remove previous selection
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked card
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('selected');
+            
+            // Enable start button
+            const startButton = document.getElementById('start-button');
+            startButton.disabled = false;
+            startButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
         // Start countdown
         function startCountdown() {
-            timeLeft = 300;
+            timeLeft = 30;
             const countdownEl = document.getElementById('countdown');
             
             countdownInterval = setInterval(() => {
@@ -351,6 +429,8 @@
         }
 
         async function startGame() {
+            if (!selectedMode) return;
+            
             document.getElementById('title-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
             document.getElementById('end-screen').classList.add('hidden');
@@ -360,16 +440,27 @@
             score = 0;
             document.getElementById('score').textContent = score;
             document.getElementById('round').textContent = currentRound + 1;
+            
+            // Update mode display
+            const modeNames = {
+                'movies': 'MOVIES',
+                'tv': 'TV SHOWS',
+                'mixed': 'MIXED MODE'
+            };
+            document.getElementById('mode-display').textContent = modeNames[selectedMode];
 
             try {
-                const response = await fetch('http://localhost:8080/game');
-                if (!response.ok) throw new Error('Network response was not ok');
+                const response = await fetch(`http://localhost:8080/game?mode=${selectedMode}`);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
                 questions = await response.json();
                 console.log('Questions loaded:', questions);
                 displayRound();
             } catch (error) {
                 console.error('Error loading game:', error);
-                showError();
+                showError(error.message);
             }
         }
 
@@ -379,24 +470,30 @@
                 return;
             }
 
-            const { movieA, movieB, type } = questions[currentRound];
+            const { itemA, itemB, type } = questions[currentRound];
             
             document.getElementById('question').innerHTML = `
-                <p class="text-3xl font-bold mb-2">Which movie is ranked ${type === 'more' ? 'higher' : 'lower'}?</p>
-                <p class="text-lg opacity-75">Choose the movie you think has a ${type === 'more' ? 'higher' : 'lower'} IMDB ranking</p>
+                <p class="text-3xl font-bold mb-2">Which is ranked ${type === 'more' ? 'higher' : 'lower'}?</p>
+                <p class="text-lg opacity-75">Choose the option you think has a ${type === 'more' ? 'higher' : 'lower'} IMDB ranking</p>
             `;
             
+            const itemTypeA = itemA.type === 'movie' ? 'Movie' : 'TV Show';
+            const itemTypeB = itemB.type === 'movie' ? 'Movie' : 'TV Show';
+            
             document.getElementById('movies').innerHTML = `
-                <div class="movie-card rounded-2xl p-6 max-w-sm relative" id="movie-a">
+                <div class="movie-card rounded-2xl p-6 max-w-sm relative" id="item-a">
                     <div class="relative">
-                        <img src="${movieA.image_url}" 
+                        <img src="${itemA.image_url}" 
                              onerror="this.src='https://via.placeholder.com/300x450/667eea/ffffff?text=No+Image'" 
-                             alt="${movieA.title}" 
+                             alt="${itemA.title}" 
                              class="w-full h-80 object-cover rounded-xl mb-4 shadow-lg">
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                            ${itemTypeA}
+                        </div>
                     </div>
-                    <p class="text-xl font-bold text-white mb-4">${movieA.title}</p>
+                    <p class="text-xl font-bold text-white mb-4">${itemA.title}</p>
                     <button onclick="checkAnswer('A')" class="button-glow text-white font-bold py-3 px-6 rounded-full w-full">
-                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE MOVIE A
+                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE OPTION A
                     </button>
                 </div>
                 
@@ -404,16 +501,19 @@
                     <i class="fas fa-bolt"></i> VS <i class="fas fa-bolt"></i>
                 </div>
                 
-                <div class="movie-card rounded-2xl p-6 max-w-sm relative" id="movie-b">
+                <div class="movie-card rounded-2xl p-6 max-w-sm relative" id="item-b">
                     <div class="relative">
-                        <img src="${movieB.image_url}" 
+                        <img src="${itemB.image_url}" 
                              onerror="this.src='https://via.placeholder.com/300x450/764ba2/ffffff?text=No+Image'" 
-                             alt="${movieB.title}" 
+                             alt="${itemB.title}" 
                              class="w-full h-80 object-cover rounded-xl mb-4 shadow-lg">
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                            ${itemTypeB}
+                        </div>
                     </div>
-                    <p class="text-xl font-bold text-white mb-4">${movieB.title}</p>
+                    <p class="text-xl font-bold text-white mb-4">${itemB.title}</p>
                     <button onclick="checkAnswer('B')" class="button-glow text-white font-bold py-3 px-6 rounded-full w-full">
-                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE MOVIE B
+                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE OPTION B
                     </button>
                 </div>
             `;
@@ -427,29 +527,29 @@
         function checkAnswer(choice, isTimeout = false) {
             stopCountdown();
             
-            const { movieA, movieB, type } = questions[currentRound];
+            const { itemA, itemB, type } = questions[currentRound];
             
             // Determine correct answer
             let correct;
             if (type === 'more') {
-                correct = choice === (movieA.rank < movieB.rank ? 'A' : 'B');
+                correct = choice === (itemA.rank < itemB.rank ? 'A' : 'B');
             } else {
-                correct = choice === (movieA.rank > movieB.rank ? 'A' : 'B');
+                correct = choice === (itemA.rank > itemB.rank ? 'A' : 'B');
             }
             
             // Show rank reveals
-            const movieACard = document.getElementById('movie-a');
-            const movieBCard = document.getElementById('movie-b');
+            const itemACard = document.getElementById('item-a');
+            const itemBCard = document.getElementById('item-b');
             
             const rankA = document.createElement('div');
             rankA.className = 'rank-reveal';
-            rankA.innerHTML = `<i class="fas fa-trophy mr-2"></i>RANK #${movieA.rank}`;
-            movieACard.appendChild(rankA);
+            rankA.innerHTML = `<i class="fas fa-trophy mr-2"></i>RANK #${itemA.rank}`;
+            itemACard.appendChild(rankA);
             
             const rankB = document.createElement('div');
             rankB.className = 'rank-reveal';
-            rankB.innerHTML = `<i class="fas fa-trophy mr-2"></i>RANK #${movieB.rank}`;
-            movieBCard.appendChild(rankB);
+            rankB.innerHTML = `<i class="fas fa-trophy mr-2"></i>RANK #${itemB.rank}`;
+            itemBCard.appendChild(rankB);
             
             // Disable buttons
             const buttons = document.querySelectorAll('#movies button');
@@ -485,12 +585,12 @@
             
             let message = '';
             if (score >= 9) {
-                message = '🏆 MOVIE MASTER! You know your films!';
+                message = '🏆 ENTERTAINMENT MASTER! You know your stuff!';
                 createConfetti();
             } else if (score >= 7) {
-                message = '🎯 GREAT JOB! You\'re a movie buff!';
+                message = '🎯 GREAT JOB! You\'re a true fan!';
             } else if (score >= 5) {
-                message = '👍 NOT BAD! Keep watching more movies!';
+                message = '👍 NOT BAD! Keep watching more content!';
             } else {
                 message = '📚 ROOM TO IMPROVE! Time to binge some classics!';
             }
@@ -498,10 +598,31 @@
             document.getElementById('performance-message').textContent = message;
         }
 
-        function showError() {
+        function showError(message) {
             document.getElementById('title-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('error-screen').classList.remove('hidden');
+            
+            if (message) {
+                document.getElementById('error-message').textContent = message;
+            }
+        }
+
+        function goToTitleScreen() {
+            document.getElementById('title-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('error-screen').classList.add('hidden');
+            
+            // Reset mode selection
+            selectedMode = '';
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const startButton = document.getElementById('start-button');
+            startButton.disabled = true;
+            startButton.classList.add('opacity-50', 'cursor-not-allowed');
         }
 
         // Initialize particles on load
