@@ -7,75 +7,130 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
         
         * {
             box-sizing: border-box;
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a0a0a 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            color: #ffffff;
         }
         
-        .neon-glow {
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5), 0 0 40px rgba(118, 75, 162, 0.3);
+        .cinema-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 4rem;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .film-strip {
+            position: relative;
+            background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+            border-top: 3px solid #dc2626;
+            border-bottom: 3px solid #dc2626;
+            padding: 1rem 0;
+            margin: 2rem 0;
+        }
+        
+        .film-strip::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: repeating-linear-gradient(
+                90deg,
+                #dc2626 0px,
+                #dc2626 20px,
+                transparent 20px,
+                transparent 40px
+            );
+        }
+        
+        .film-strip::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: repeating-linear-gradient(
+                90deg,
+                #dc2626 0px,
+                #dc2626 20px,
+                transparent 20px,
+                transparent 40px
+            );
         }
         
         .movie-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #3a3a3a;
+            border-radius: 12px;
             transition: all 0.3s ease;
-            transform-style: preserve-3d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
         }
         
         .movie-card:hover {
-            transform: translateY(-10px) rotateY(5deg);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-8px);
+            border-color: #dc2626;
+            box-shadow: 0 8px 30px rgba(220, 38, 38, 0.3);
         }
         
         .mode-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #3a3a3a;
+            border-radius: 12px;
             transition: all 0.3s ease;
             cursor: pointer;
+            padding: 2rem;
         }
         
         .mode-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-4px);
+            border-color: #dc2626;
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.2);
         }
         
         .mode-card.selected {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.2);
-            box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
+            border-color: #dc2626;
+            background: linear-gradient(135deg, #2a1a1a 0%, #3a2a2a 100%);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
         }
         
         .countdown-circle {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, #ff6b6b 0%, #4ecdc4 100%);
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Orbitron', monospace;
-            font-weight: 900;
+            font-family: 'Bebas Neue', cursive;
             font-size: 24px;
             color: white;
-            position: relative;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+            border: 3px solid #3a3a3a;
+        }
+        
+        .countdown-warning {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
             animation: pulse 1s infinite;
         }
         
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
         
@@ -84,16 +139,17 @@
             top: -50px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 18px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 16px;
             opacity: 0;
-            animation: slideDown 0.8s ease-out forwards;
+            animation: slideDown 0.6s ease-out forwards;
             z-index: 10;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.5);
+            border: 2px solid #3a3a3a;
         }
         
         @keyframes slideDown {
@@ -107,173 +163,157 @@
             }
         }
         
-        .bg-animated {
-            background: linear-gradient(270deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 800% 800%;
-            animation: gradientShift 8s ease infinite;
-        }
-        
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .button-glow {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        .cinema-button {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: 2px solid #3a3a3a;
             transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             position: relative;
             overflow: hidden;
         }
         
-        .button-glow:hover {
+        .cinema-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+            border-color: #dc2626;
         }
         
-        .button-glow::before {
+        .cinema-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .cinema-button::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transition: left 0.5s;
         }
         
-        .button-glow:hover::before {
+        .cinema-button:hover::before {
             left: 100%;
         }
         
-        .score-counter {
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            font-size: 2rem;
-            background: linear-gradient(45deg, #ffd93d, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .score-display {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2.5rem;
+            color: #dc2626;
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
         }
         
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
+        .game-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #3a3a3a;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
         }
         
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            animation: twinkle 2s infinite;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
-        }
-        
-        .celebration {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #ff6b6b;
-            animation: confetti-fall 3s linear infinite;
-        }
-        
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
         .mode-icon {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, #ffd93d, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #dc2626;
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+        
+        .vs-text {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3rem;
+            color: #dc2626;
+            text-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+        
+        .feedback-correct {
+            color: #22c55e;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .feedback-incorrect {
+            color: #ef4444;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .feedback-timeout {
+            color: #f59e0b;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .end-screen-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #3a3a3a;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+        }
+        
+        .title-screen-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #3a3a3a;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+        }
+        
+        .item-type-badge {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
-<body class="bg-animated min-h-screen flex flex-col items-center justify-center relative">
-    
-    <!-- Particles Background -->
-    <div class="particles" id="particles"></div>
-    
-    <!-- Celebration Confetti -->
-    <div class="celebration" id="celebration"></div>
+<body class="min-h-screen flex flex-col items-center justify-center">
 
     <!-- Title Screen -->
-    <div id="title-screen" class="text-center text-white floating">
-        <div class="neon-glow bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 max-w-4xl">
-            <h1 class="text-6xl font-bold mb-6 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
-                🎬 MORE OR LESS
-            </h1>
-            <p class="text-2xl mb-4 text-gray-200">Movie & TV Show Ranking Game</p>
-            <p class="text-lg mb-8 text-gray-300">Guess which movie or TV show is ranked higher on IMDB!</p>
+    <div id="title-screen" class="text-center text-white">
+        <div class="title-screen-bg p-12 max-w-4xl mx-4">
+            <h1 class="cinema-title mb-4">MORE OR LESS</h1>
+            <div class="film-strip">
+                <p class="text-xl font-medium text-gray-300">Movie & TV Show Ranking Game</p>
+            </div>
+            <p class="text-lg mb-8 text-gray-400">Guess which movie or TV show is ranked higher on IMDB!</p>
             
             <!-- Mode Selection -->
             <div class="mb-8">
-                <h3 class="text-xl font-bold mb-4 text-white">Choose Your Mode:</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="mode-card rounded-2xl p-6 text-center" data-mode="movies" onclick="selectMode('movies')">
+                <h3 class="text-xl font-bold mb-6 text-white">Choose Your Mode:</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="mode-card text-center" data-mode="movies" onclick="selectMode('movies')">
                         <div class="mode-icon">
                             <i class="fas fa-film"></i>
                         </div>
                         <h4 class="text-lg font-bold mb-2">Movies Only</h4>
-                        <p class="text-sm opacity-75">Classic cinema showdown</p>
+                        <p class="text-sm text-gray-400">Classic cinema showdown</p>
                     </div>
-                    <div class="mode-card rounded-2xl p-6 text-center" data-mode="tv" onclick="selectMode('tv')">
+                    <div class="mode-card text-center" data-mode="tv" onclick="selectMode('tv')">
                         <div class="mode-icon">
                             <i class="fas fa-tv"></i>
                         </div>
                         <h4 class="text-lg font-bold mb-2">TV Shows Only</h4>
-                        <p class="text-sm opacity-75">Television series battle</p>
+                        <p class="text-sm text-gray-400">Television series battle</p>
                     </div>
-                    <div class="mode-card rounded-2xl p-6 text-center" data-mode="mixed" onclick="selectMode('mixed')">
+                    <div class="mode-card text-center" data-mode="mixed" onclick="selectMode('mixed')">
                         <div class="mode-icon">
                             <i class="fas fa-star"></i>
                         </div>
                         <h4 class="text-lg font-bold mb-2">Mixed Mode</h4>
-                        <p class="text-sm opacity-75">Movies vs TV shows</p>
+                        <p class="text-sm text-gray-400">Movies vs TV shows</p>
                     </div>
                 </div>
             </div>
             
-            <button id="start-button" onclick="startGame()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 opacity-50 cursor-not-allowed" disabled>
+            <button id="start-button" onclick="startGame()" class="cinema-button py-4 px-8 rounded-lg text-xl opacity-50 cursor-not-allowed" disabled>
                 <i class="fas fa-play mr-2"></i>START GAME
             </button>
         </div>
@@ -282,25 +322,25 @@
     <!-- Game Screen -->
     <div id="game-screen" class="hidden text-center w-full max-w-7xl px-4">
         <!-- Header -->
-        <div class="flex justify-between items-center mb-8 bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6">
+        <div class="flex justify-between items-center mb-8 game-header p-6">
             <div class="text-white">
-                <div class="text-sm opacity-75">ROUND</div>
-                <div class="score-counter" id="round">1</div>
+                <div class="text-sm text-gray-400 uppercase tracking-wide">Round</div>
+                <div class="score-display" id="round">1</div>
             </div>
             <div class="text-center">
                 <div class="countdown-circle" id="countdown">30</div>
-                <div class="text-xs mt-2 opacity-75" id="mode-display">MOVIES</div>
+                <div class="text-xs mt-2 text-gray-400 uppercase tracking-wide" id="mode-display">MOVIES</div>
             </div>
             <div class="text-white">
-                <div class="text-sm opacity-75">SCORE</div>
-                <div class="score-counter" id="score">0</div>
+                <div class="text-sm text-gray-400 uppercase tracking-wide">Score</div>
+                <div class="score-display" id="score">0</div>
             </div>
         </div>
 
         <!-- Question -->
         <div id="question" class="mb-8 text-white">
             <p class="text-3xl font-bold mb-2">Which is ranked higher?</p>
-            <p class="text-lg opacity-75">Choose the option you think has a higher IMDB ranking</p>
+            <p class="text-lg text-gray-400">Choose the option you think has a higher IMDB ranking</p>
         </div>
 
         <!-- Movies Container -->
@@ -309,22 +349,22 @@
         </div>
 
         <!-- Feedback -->
-        <div id="feedback" class="mt-8 text-2xl font-bold text-white"></div>
+        <div id="feedback" class="mt-8 text-2xl font-bold"></div>
         
         <!-- Next Button -->
-        <button id="next-button" onclick="nextRound()" class="hidden mt-6 button-glow text-white font-bold py-3 px-6 rounded-full text-lg">
+        <button id="next-button" onclick="nextRound()" class="hidden mt-6 cinema-button py-3 px-6 rounded-lg text-lg">
             <i class="fas fa-arrow-right mr-2"></i>NEXT ROUND
         </button>
     </div>
 
     <!-- End Screen -->
     <div id="end-screen" class="hidden text-center text-white">
-        <div class="neon-glow bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 max-w-2xl">
-            <h2 class="text-5xl font-bold mb-6">🎉 GAME COMPLETE!</h2>
-            <p class="text-2xl mb-6">Your final score:</p>
-            <div class="score-counter text-6xl mb-8" id="final-score">0/10</div>
-            <div id="performance-message" class="text-lg mb-8 opacity-75"></div>
-            <button onclick="goToTitleScreen()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl">
+        <div class="end-screen-bg p-12 max-w-2xl mx-4">
+            <h2 class="text-5xl font-bold mb-6">🎬 GAME COMPLETE!</h2>
+            <p class="text-2xl mb-6 text-gray-300">Your final score:</p>
+            <div class="score-display text-6xl mb-8" id="final-score">0/10</div>
+            <div id="performance-message" class="text-lg mb-8 text-gray-400"></div>
+            <button onclick="goToTitleScreen()" class="cinema-button py-4 px-8 rounded-lg text-xl">
                 <i class="fas fa-redo mr-2"></i>PLAY AGAIN
             </button>
         </div>
@@ -332,10 +372,10 @@
 
     <!-- Error Screen -->
     <div id="error-screen" class="hidden text-center text-white">
-        <div class="neon-glow bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 max-w-2xl">
+        <div class="end-screen-bg p-12 max-w-2xl mx-4">
             <h2 class="text-4xl font-bold mb-6">⚠️ CONNECTION ERROR</h2>
-            <p class="text-lg mb-8 opacity-75" id="error-message">Unable to load game data. Please make sure the backend server is running on port 8080.</p>
-            <button onclick="goToTitleScreen()" class="button-glow text-white font-bold py-4 px-8 rounded-full text-xl">
+            <p class="text-lg mb-8 text-gray-400" id="error-message">Unable to load game data. Please make sure the backend server is running on port 8080.</p>
+            <button onclick="goToTitleScreen()" class="cinema-button py-4 px-8 rounded-lg text-xl">
                 <i class="fas fa-sync mr-2"></i>TRY AGAIN
             </button>
         </div>
@@ -349,39 +389,6 @@
         let timeLeft = 30;
         let selectedMode = '';
         const totalRounds = 10;
-
-        // Initialize particles
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 2 + 's';
-                particles.appendChild(particle);
-            }
-        }
-
-        // Create confetti effect
-        function createConfetti() {
-            const celebration = document.getElementById('celebration');
-            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffd93d', '#6c5ce7'];
-            
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDelay = Math.random() * 3 + 's';
-                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                celebration.appendChild(confetti);
-            }
-            
-            setTimeout(() => {
-                celebration.innerHTML = '';
-            }, 4000);
-        }
 
         // Mode selection
         function selectMode(mode) {
@@ -405,13 +412,14 @@
         function startCountdown() {
             timeLeft = 30;
             const countdownEl = document.getElementById('countdown');
+            countdownEl.classList.remove('countdown-warning');
             
             countdownInterval = setInterval(() => {
                 timeLeft--;
                 countdownEl.textContent = timeLeft;
                 
                 if (timeLeft <= 10) {
-                    countdownEl.style.background = 'conic-gradient(from 0deg, #ff6b6b 0%, #ff3333 100%)';
+                    countdownEl.classList.add('countdown-warning');
                 }
                 
                 if (timeLeft <= 0) {
@@ -425,7 +433,7 @@
         // Stop countdown
         function stopCountdown() {
             clearInterval(countdownInterval);
-            document.getElementById('countdown').style.background = 'conic-gradient(from 0deg, #ff6b6b 0%, #4ecdc4 100%)';
+            document.getElementById('countdown').classList.remove('countdown-warning');
         }
 
         async function startGame() {
@@ -474,46 +482,46 @@
             
             document.getElementById('question').innerHTML = `
                 <p class="text-3xl font-bold mb-2">Which is ranked ${type === 'more' ? 'higher' : 'lower'}?</p>
-                <p class="text-lg opacity-75">Choose the option you think has a ${type === 'more' ? 'higher' : 'lower'} IMDB ranking</p>
+                <p class="text-lg text-gray-400">Choose the option you think has a ${type === 'more' ? 'higher' : 'lower'} IMDB ranking</p>
             `;
             
             const itemTypeA = itemA.type === 'movie' ? 'Movie' : 'TV Show';
             const itemTypeB = itemB.type === 'movie' ? 'Movie' : 'TV Show';
             
             document.getElementById('movies').innerHTML = `
-                <div class="movie-card rounded-2xl p-6 max-w-sm relative" id="item-a">
+                <div class="movie-card p-6 max-w-sm relative" id="item-a">
                     <div class="relative">
                         <img src="${itemA.image_url}" 
-                             onerror="this.src='https://via.placeholder.com/300x450/667eea/ffffff?text=No+Image'" 
+                             onerror="this.src='https://via.placeholder.com/300x450/1a1a1a/dc2626?text=No+Image'" 
                              alt="${itemA.title}" 
-                             class="w-full h-80 object-cover rounded-xl mb-4 shadow-lg">
-                        <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                             class="w-full h-80 object-cover rounded-lg mb-4">
+                        <div class="absolute top-2 right-2 item-type-badge">
                             ${itemTypeA}
                         </div>
                     </div>
                     <p class="text-xl font-bold text-white mb-4">${itemA.title}</p>
-                    <button onclick="checkAnswer('A')" class="button-glow text-white font-bold py-3 px-6 rounded-full w-full">
-                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE OPTION A
+                    <button onclick="checkAnswer('A')" class="cinema-button py-3 px-6 rounded-lg w-full">
+                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE A
                     </button>
                 </div>
                 
-                <div class="text-4xl font-bold text-white mx-8 floating">
-                    <i class="fas fa-bolt"></i> VS <i class="fas fa-bolt"></i>
+                <div class="vs-text mx-8">
+                    VS
                 </div>
                 
-                <div class="movie-card rounded-2xl p-6 max-w-sm relative" id="item-b">
+                <div class="movie-card p-6 max-w-sm relative" id="item-b">
                     <div class="relative">
                         <img src="${itemB.image_url}" 
-                             onerror="this.src='https://via.placeholder.com/300x450/764ba2/ffffff?text=No+Image'" 
+                             onerror="this.src='https://via.placeholder.com/300x450/1a1a1a/dc2626?text=No+Image'" 
                              alt="${itemB.title}" 
-                             class="w-full h-80 object-cover rounded-xl mb-4 shadow-lg">
-                        <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                             class="w-full h-80 object-cover rounded-lg mb-4">
+                        <div class="absolute top-2 right-2 item-type-badge">
                             ${itemTypeB}
                         </div>
                     </div>
                     <p class="text-xl font-bold text-white mb-4">${itemB.title}</p>
-                    <button onclick="checkAnswer('B')" class="button-glow text-white font-bold py-3 px-6 rounded-full w-full">
-                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE OPTION B
+                    <button onclick="checkAnswer('B')" class="cinema-button py-3 px-6 rounded-lg w-full">
+                        <i class="fas fa-mouse-pointer mr-2"></i>CHOOSE B
                     </button>
                 </div>
             `;
@@ -557,15 +565,15 @@
             
             // Show feedback
             setTimeout(() => {
+                const feedbackEl = document.getElementById('feedback');
                 if (isTimeout) {
-                    document.getElementById('feedback').innerHTML = '<i class="fas fa-clock mr-2"></i>⏰ TIME UP!';
+                    feedbackEl.innerHTML = '<span class="feedback-timeout"><i class="fas fa-clock mr-2"></i>TIME UP!</span>';
                 } else if (correct) {
                     score++;
                     document.getElementById('score').textContent = score;
-                    document.getElementById('feedback').innerHTML = '<i class="fas fa-check-circle mr-2"></i>✅ CORRECT!';
-                    createConfetti();
+                    feedbackEl.innerHTML = '<span class="feedback-correct"><i class="fas fa-check-circle mr-2"></i>CORRECT!</span>';
                 } else {
-                    document.getElementById('feedback').innerHTML = '<i class="fas fa-times-circle mr-2"></i>❌ INCORRECT!';
+                    feedbackEl.innerHTML = '<span class="feedback-incorrect"><i class="fas fa-times-circle mr-2"></i>INCORRECT!</span>';
                 }
                 
                 document.getElementById('next-button').classList.remove('hidden');
@@ -585,10 +593,9 @@
             
             let message = '';
             if (score >= 9) {
-                message = '🏆 ENTERTAINMENT MASTER! You know your stuff!';
-                createConfetti();
+                message = '🏆 CINEMA MASTER! You know your stuff!';
             } else if (score >= 7) {
-                message = '🎯 GREAT JOB! You\'re a true fan!';
+                message = '🎯 GREAT JOB! You\'re a true film buff!';
             } else if (score >= 5) {
                 message = '👍 NOT BAD! Keep watching more content!';
             } else {
@@ -624,9 +631,6 @@
             startButton.disabled = true;
             startButton.classList.add('opacity-50', 'cursor-not-allowed');
         }
-
-        // Initialize particles on load
-        window.addEventListener('load', createParticles);
     </script>
 </body>
 </html>
